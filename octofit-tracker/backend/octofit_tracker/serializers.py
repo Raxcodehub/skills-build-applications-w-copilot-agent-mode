@@ -1,5 +1,13 @@
 from rest_framework import serializers
-from tracker.models import User, Team, Activity, Leaderboard, Workout
+from octofit_tracker.models import User, Team, Activity, Leaderboard, Workout
+from bson import ObjectId
+
+class ObjectIdField(serializers.Field):
+    def to_representation(self, value):
+        return str(value)
+
+    def to_internal_value(self, data):
+        return ObjectId(data)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,16 +15,22 @@ class UserSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TeamSerializer(serializers.ModelSerializer):
+    members = UserSerializer(many=True, read_only=True)
+    
     class Meta:
         model = Team
         fields = '__all__'
 
 class ActivitySerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    
     class Meta:
         model = Activity
         fields = '__all__'
 
 class LeaderboardSerializer(serializers.ModelSerializer):
+    team = TeamSerializer(read_only=True)
+    
     class Meta:
         model = Leaderboard
         fields = '__all__'

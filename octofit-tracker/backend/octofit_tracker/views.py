@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from tracker.models import User, Team, Activity, Leaderboard, Workout
+from octofit_tracker.models import User, Team, Activity, Leaderboard, Workout
 from .serializers import UserSerializer, TeamSerializer, ActivitySerializer, LeaderboardSerializer, WorkoutSerializer
 
 class UserViewSet(viewsets.ModelViewSet):

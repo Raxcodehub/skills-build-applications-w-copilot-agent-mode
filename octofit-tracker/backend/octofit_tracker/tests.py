@@ -1,5 +1,5 @@
 from django.test import TestCase
-from tracker.models import User, Team, Activity, Leaderboard, Workout
+from .models import User, Team, Activity, Leaderboard, Workout
 
 class UserModelTest(TestCase):
     def test_user_creation(self):
