@@ -7,7 +7,7 @@ class User(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
-    members = models.ArrayField(model_container=User)
+    members = models.ManyToManyField('User')
 
 class Activity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
