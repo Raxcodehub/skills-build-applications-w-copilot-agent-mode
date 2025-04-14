@@ -66,6 +66,21 @@ class Command(BaseCommand):
         print(f"Created additional team: {team2}")
         print("Added additional activities, leaderboard entries, and workouts.")
 
+        # Add user authentication and profiles test data
+        user5 = User.objects.create(username='charlie_davis', email='charlie@example.com', password='password123')
+        user6 = User.objects.create(username='diana_evans', email='diana@example.com', password='password123')
+
+        # Add competitive leaderboard test data
+        Leaderboard.objects.create(user=user5, score=250)
+        Leaderboard.objects.create(user=user6, score=300)
+
+        # Add personalized workout suggestions test data
+        Workout.objects.create(name='Yoga', description='Perform 15 minutes of yoga')
+        Workout.objects.create(name='Stretching', description='Stretch for 10 minutes')
+
+        print(f"Created additional users: {user5}, {user6}")
+        print("Added additional leaderboard entries and workouts.")
+
         # Explicitly save objects to ensure they are committed to the database
         user1.save()
         user2.save()
