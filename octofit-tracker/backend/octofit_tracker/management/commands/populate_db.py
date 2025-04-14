@@ -6,6 +6,15 @@ class Command(BaseCommand):
     help = 'Populate the octofit_db database with test data'
 
     def handle(self, *args, **kwargs):
+        # Clear existing data before inserting new test data
+        User.objects.all().delete()
+        Team.objects.all().delete()
+        Activity.objects.all().delete()
+        Leaderboard.objects.all().delete()
+        Workout.objects.all().delete()
+
+        print("Cleared existing data from all collections.")
+
         # Create test users
         user1 = User.objects.create(username='john_doe', email='john@example.com', password='password123')
         user2 = User.objects.create(username='jane_doe', email='jane@example.com', password='password123')
@@ -36,6 +45,26 @@ class Command(BaseCommand):
         workout2 = Workout.objects.create(name='Sit-ups', description='Do 30 sit-ups')
         print(f"Created workout: {workout1}")
         print(f"Created workout: {workout2}")
+
+        # Add required test data as specified in the workflow
+        user3 = User.objects.create(username='alice_smith', email='alice@example.com', password='password123')
+        user4 = User.objects.create(username='bob_brown', email='bob@example.com', password='password123')
+
+        team2 = Team.objects.create(name='Team Beta')
+        team2.members.add(user3, user4)
+
+        Activity.objects.create(user=user3, activity_type='Swimming', duration=timedelta(minutes=45))
+        Activity.objects.create(user=user4, activity_type='Hiking', duration=timedelta(hours=2))
+
+        Leaderboard.objects.create(user=user3, score=180)
+        Leaderboard.objects.create(user=user4, score=220)
+
+        Workout.objects.create(name='Plank', description='Hold a plank for 1 minute')
+        Workout.objects.create(name='Jumping Jacks', description='Do 50 jumping jacks')
+
+        print(f"Created additional users: {user3}, {user4}")
+        print(f"Created additional team: {team2}")
+        print("Added additional activities, leaderboard entries, and workouts.")
 
         # Explicitly save objects to ensure they are committed to the database
         user1.save()
