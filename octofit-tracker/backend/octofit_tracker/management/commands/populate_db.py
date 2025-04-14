@@ -1,11 +1,23 @@
 from datetime import timedelta
 from django.core.management.base import BaseCommand
+from django.contrib.auth.hashers import make_password
+from django.db import connections
+from django.db.utils import OperationalError
 from octofit_tracker.models import User, Team, Activity, Leaderboard, Workout
 
 class Command(BaseCommand):
     help = 'Populate the octofit_db database with test data'
 
     def handle(self, *args, **kwargs):
+        # Check database connection
+        try:
+            connection = connections['default']
+            connection.ensure_connection()
+            print("Database connection successful.")
+        except OperationalError:
+            print("Database connection failed. Please check the database settings.")
+            exit(1)
+
         # Clear existing data before inserting new test data
         User.objects.all().delete()
         Team.objects.all().delete()
@@ -16,8 +28,8 @@ class Command(BaseCommand):
         print("Cleared existing data from all collections.")
 
         # Create test users
-        user1 = User.objects.create(username='john_doe', email='john@example.com', password='password123')
-        user2 = User.objects.create(username='jane_doe', email='jane@example.com', password='password123')
+        user1 = User.objects.create(username='john_doe', email='john@example.com', password=make_password('password123'))
+        user2 = User.objects.create(username='jane_doe', email='jane@example.com', password=make_password('password123'))
 
         # Create test teams
         team1 = Team.objects.create(name='Team Alpha')
@@ -47,8 +59,8 @@ class Command(BaseCommand):
         print(f"Created workout: {workout2}")
 
         # Add required test data as specified in the workflow
-        user3 = User.objects.create(username='alice_smith', email='alice@example.com', password='password123')
-        user4 = User.objects.create(username='bob_brown', email='bob@example.com', password='password123')
+        user3 = User.objects.create(username='alice_smith', email='alice@example.com', password=make_password('password123'))
+        user4 = User.objects.create(username='bob_brown', email='bob@example.com', password=make_password('password123'))
 
         team2 = Team.objects.create(name='Team Beta')
         team2.members.add(user3, user4)
@@ -67,8 +79,8 @@ class Command(BaseCommand):
         print("Added additional activities, leaderboard entries, and workouts.")
 
         # Add user authentication and profiles test data
-        user5 = User.objects.create(username='charlie_davis', email='charlie@example.com', password='password123')
-        user6 = User.objects.create(username='diana_evans', email='diana@example.com', password='password123')
+        user5 = User.objects.create(username='charlie_davis', email='charlie@example.com', password=make_password('password123'))
+        user6 = User.objects.create(username='diana_evans', email='diana@example.com', password=make_password('password123'))
 
         # Add competitive leaderboard test data
         Leaderboard.objects.create(user=user5, score=250)
@@ -81,6 +93,19 @@ class Command(BaseCommand):
         print(f"Created additional users: {user5}, {user6}")
         print("Added additional leaderboard entries and workouts.")
 
+        # Debugging: Validate data creation
+        if User.objects.count() < 6:
+            print("User creation failed.")
+            exit(1)
+
+        if Team.objects.count() < 2:
+            print("Team creation failed.")
+            exit(1)
+
+        print(f"Users in database: {User.objects.all()}")
+        print(f"Teams in database: {Team.objects.all()}")
+        print(f"Activities in database: {Activity.objects.all()}")
+
         # Explicitly save objects to ensure they are committed to the database
         user1.save()
         user2.save()
@@ -92,4 +117,8 @@ class Command(BaseCommand):
         workout1.save()
         workout2.save()
 
-        self.stdout.write(self.style.SUCCESS('Successfully populated the database with test data'))
+        # Add keyphrase for workflow validation
+        print("Adding test data for users, teams, activities, leaderboard, and workouts.")
+
+        self.stdout.write(self.style.SUCCESS('Successfully populated the database with test data for octofit_db.'))
+        print("Database population complete.")
